@@ -11,8 +11,12 @@ export class SiteSettingsPublicController {
 
   @Get('public')
   @ApiOperation({ summary: 'Get public business/contact information' })
-  getPublic() {
-    return this.settingsService.get();
+  async getPublic() {
+    const settings = await this.settingsService.get();
+    return {
+      ...settings.toObject(),
+      googleMapsEmbedUrl: await this.settingsService.getEmbedUrl(settings.googleMapsUrl),
+    };
   }
 }
 

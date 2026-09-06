@@ -12,8 +12,18 @@
  * bcrypt before being stored, and is NEVER logged or written to any file.
  */
 import 'dotenv/config';
+import * as dns from 'node:dns';
 import * as mongoose from 'mongoose';
 import * as bcrypt from 'bcrypt';
+
+const dnsServers = (process.env.DNS_SERVERS || '')
+  .split(',')
+  .map((server) => server.trim())
+  .filter(Boolean);
+
+if (dnsServers.length > 0) {
+  dns.setServers(dnsServers);
+}
 
 async function run() {
   const mongodbUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/cracker_shop';

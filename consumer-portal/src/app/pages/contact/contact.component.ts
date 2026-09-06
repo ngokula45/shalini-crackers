@@ -20,29 +20,36 @@ export class ContactComponent implements OnInit {
     this.api.getSiteSettings().subscribe({ next: (s) => { this.settings = s; this.setEmbedUrl(); } });
   }
   private computeMapsUrl(raw?: string, address?: string): string {
-    const hasRaw = !!(raw || '').trim();
-    const searchTarget = (address || raw || 'store location').trim();
+    const configuredUrl = (raw || '').trim();
+    const searchTarget = (address || 'store location').trim();
 
-    if (hasRaw && (raw!.includes('maps.app.goo.gl') || raw!.includes('goo.gl'))) {
-      return `https://www.google.com/maps?q=${encodeURIComponent(searchTarget)}&output=embed&z=15`;
-    }
-
-    if (hasRaw && (raw!.includes('maps.google') || raw!.includes('google.com/maps'))) {
+    if (configuredUrl) {
       try {
-        const mapUrl = new URL(raw!.startsWith('http') ? raw! : `https://www.google.com/maps?q=${encodeURIComponent(raw!)}`);
-        mapUrl.searchParams.set('output', 'embed');
-        mapUrl.searchParams.set('z', '15');
-        return mapUrl.toString();
+        const mapUrl = new URL(configuredUrl);
+        const isGoogleMapsUrl = mapUrl.hostname === 'google.com'
+          || mapUrl.hostname.endsWith('.google.com')
+          || mapUrl.hostname === 'goo.gl'
+          || mapUrl.hostname.endsWith('.goo.gl')
+          || mapUrl.hostname.endsWith('.app.goo.gl');
+
+        if (isGoogleMapsUrl) {
+          mapUrl.searchParams.set('output', 'embed');
+          return mapUrl.toString();
+        }
       } catch {
-        return `https://www.google.com/maps?q=${encodeURIComponent(searchTarget)}&output=embed&z=15`;
+        // Fall back to the configured text below when the value is not a URL.
       }
     }
 
-    return `https://www.google.com/maps?q=${encodeURIComponent(searchTarget)}&output=embed&z=15`;
+    const target = configuredUrl || searchTarget;
+    return `https://www.google.com/maps?q=${encodeURIComponent(target)}&output=embed&z=15`;
   }
 
   private setEmbedUrl() {
-    const url = this.computeMapsUrl(this.settings?.googleMapsUrl, this.settings?.address);
+    const url = this.computeMapsUrl(
+      this.settings?.googleMapsEmbedUrl || this.settings?.googleMapsUrl,
+      this.settings?.address,
+    );
     this.embedUrl = url ? this.sanitizer.bypassSecurityTrustResourceUrl(url) : null;
   }
 }

@@ -7,6 +7,7 @@ export interface SiteSettings {
   email?: string;
   address?: string;
   googleMapsUrl?: string;
+  googleMapsEmbedUrl?: string;
   openingHours?: string;
   socialLinks?: { facebook?: string; instagram?: string; youtube?: string };
 }
