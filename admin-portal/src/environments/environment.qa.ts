@@ -1,4 +1,4 @@
 export const environment = {
   production: false,
-  apiBaseUrl: 'https://api-qa.clientdomain.in/api/v1',
+  apiBaseUrl: 'https://claudzcracker.onrender.com/api/v1',
 };
