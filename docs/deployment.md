@@ -27,8 +27,9 @@ Never point a QA deployment at the production database, and never run destructiv
 ## 3. Backend (Render or equivalent)
 
 1. Connect the GitHub repository, set the root directory to `backend/`.
-2. Build command: `npm install && npm run build`. Start command: `npm run start:prod`.
-3. Configure environment variables (per environment — QA service and prod service each get their own):
+2. Set the Node version to `20.x` (also declared in `backend/package.json`).
+3. Build command: `npm ci --include=dev && npm run build`. Start command: `npm run start:prod`.
+4. Configure environment variables (per environment — QA service and prod service each get their own):
    ```
    NODE_ENV=production
    PORT=3000
@@ -43,8 +44,8 @@ Never point a QA deployment at the production database, and never run destructiv
    RATE_LIMIT_TTL=60
    RATE_LIMIT_MAX=20
    ```
-4. Deploy. Verify `GET https://<api-host>/health` returns `{"status":"ok"}`.
-5. Run the admin seed script once against this environment (from your local machine, pointed at the deployed `MONGODB_URI`, or via a one-off Render job):
+5. Deploy. Verify `GET https://<api-host>/health` returns `{"status":"ok"}`.
+6. Run the admin seed script once against this environment (from your local machine, pointed at the deployed `MONGODB_URI`, or via a one-off Render job):
    ```bash
    MONGODB_URI=<atlas-uri> ADMIN_EMAIL=... ADMIN_PASSWORD=... npm run seed:admin --prefix backend
    ```
