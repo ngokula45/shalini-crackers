@@ -30,6 +30,7 @@ async function run() {
   const email = (process.env.ADMIN_EMAIL || '').toLowerCase().trim();
   const password = process.env.ADMIN_PASSWORD || '';
   const name = process.env.ADMIN_NAME || 'Admin';
+  const resetPassword = process.env.ADMIN_RESET_PASSWORD === 'true';
 
   if (!email || !password) {
     console.error('ADMIN_EMAIL and ADMIN_PASSWORD must be set in the environment.');
@@ -56,7 +57,15 @@ async function run() {
 
   const existing = await AdminModel.findOne({ email });
   if (existing) {
-    console.log(`Admin with email ${email} already exists — no changes made.`);
+    if (resetPassword) {
+      existing.passwordHash = await bcrypt.hash(password, 12);
+      existing.name = name;
+      existing.isActive = true;
+      await existing.save();
+      console.log(`Admin password reset: ${email}`);
+    } else {
+      console.log(`Admin with email ${email} already exists — no changes made.`);
+    }
     await mongoose.disconnect();
     return;
   }
