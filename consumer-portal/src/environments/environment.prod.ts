@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiBaseUrl: 'https://api.shalini-crackers.com/api/v1',
+  apiBaseUrl: 'https://shalini-crackers-api.onrender.com/api/v1',
 };
