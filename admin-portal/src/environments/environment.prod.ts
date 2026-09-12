@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiBaseUrl: 'https://api.clientdomain.in/api/v1',
+  apiBaseUrl: 'https://api.shalini-crackers.com/api/v1',
 };
