@@ -47,6 +47,12 @@ export class OrdersAdminController {
     return this.ordersService.archive(id);
   }
 
+  @Delete('completed')
+  @ApiOperation({ summary: 'Permanently delete all completed orders' })
+  deleteCompleted() {
+    return this.ordersService.removeCompleted();
+  }
+
   @Delete(':id')
   @ApiOperation({ summary: 'Delete an order (hard delete)' })
   delete(@Param('id') id: string) {

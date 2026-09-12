@@ -59,7 +59,7 @@ Login with the admin credentials you seeded in step 2.
 |------|-------------------------|----------------------------|------------------------------|---------------------|
 | Local| http://localhost:4200   | http://localhost:4300      | http://localhost:3000        | local MongoDB        |
 | QA   | Netlify (QA site)       | Netlify (QA site)          | Render (QA service)          | MongoDB Atlas (QA db)|
-| Prod | www.clientdomain.in     | admin.clientdomain.in      | api.clientdomain.in          | MongoDB Atlas (prod db)|
+| Prod | `www.<production-domain>` | `admin.<production-domain>` | `api.<production-domain>` | MongoDB Atlas (prod db)|
 
 See `docs/deployment.md` for full deployment steps and `docs/architecture.md` for the system diagram.
 

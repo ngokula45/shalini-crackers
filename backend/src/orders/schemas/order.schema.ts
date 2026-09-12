@@ -56,3 +56,4 @@ export class Order {
 
 export const OrderItemSchema = SchemaFactory.createForClass(OrderItem);
 export const OrderSchema = SchemaFactory.createForClass(Order);
+OrderSchema.index({ status: 1 });

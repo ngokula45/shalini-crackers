@@ -1,3 +1,5 @@
+:host { display: block; flex: 0 0 228px; }
+
 .sidebar {
   width: 228px;
   background: linear-gradient(180deg, #1a1830 0%, #12131d 100%);
@@ -34,3 +36,26 @@ nav a.active, nav a:hover {
 .admin-info p { margin: 2px 0; font-size: 0.85rem; }
 .muted { opacity: 0.6; font-size: 0.75rem !important; }
 .admin-info .btn { margin-top: 10px; width: 100%; }
+
+@media (max-width: 1000px) {
+  :host { width: 100%; flex-basis: auto; }
+  .sidebar {
+    width: 100vw;
+    height: auto;
+    position: static;
+    padding: 0;
+  }
+  .brand { padding: 14px 16px 8px; border-bottom: 0; }
+  nav {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px;
+    padding: 8px 12px 12px;
+  }
+  nav a { min-width: 0; margin: 0; padding: 10px 8px; white-space: nowrap; text-align: center; font-size: 0.88rem; }
+  nav a:last-child { grid-column: span 2; }
+  .admin-info { display: flex; align-items: center; gap: 10px; padding: 9px 14px; }
+  .admin-info p { margin: 0; }
+  .admin-info .muted { display: none; }
+  .admin-info .btn { width: auto; margin: 0 0 0 auto; padding: 8px 12px; }
+}

@@ -1,5 +1,10 @@
 .filters { display: flex; gap: 8px; margin-bottom: 16px; }
 .filters input { flex: 1; padding: 10px; border-radius: var(--radius); border: 1px solid #ddd; }
+@media (max-width: 600px) {
+  .filters { flex-wrap: wrap; }
+  .filters input { min-width: 0; }
+  .filters .btn { width: 100%; }
+}
 .category-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; }
 .chip { padding: 6px 14px; border-radius: 999px; border: 1px solid var(--color-primary); background: #fff; color: var(--color-primary); cursor: pointer; }
 .chip.active { background: var(--color-primary); color: #fff; }

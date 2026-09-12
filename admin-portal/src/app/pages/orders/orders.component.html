@@ -9,6 +9,10 @@
     <button type="button" [class.active]="selectedFilter==='pending'" (click)="selectedFilter='pending'">Pending</button>
     <button type="button" [class.active]="selectedFilter==='confirmed'" (click)="selectedFilter='confirmed'">Confirmed</button>
     <button type="button" [class.active]="selectedFilter==='completed'" (click)="selectedFilter='completed'">Completed</button>
+    <button *ngIf="completedOrdersCount" type="button" class="delete-completed-btn" title="Permanently delete all completed orders" aria-label="Permanently delete all completed orders" (click)="deleteCompleted()">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M8 6v12a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2V6M10 6V4a2 2 0 0 1 2-2h0a2 2 0 0 1 2 2v2" /></svg>
+      <span>Clear completed ({{ completedOrdersCount }})</span>
+    </button>
   </div>
 
   <div class="orders-list">
@@ -45,6 +49,7 @@
 
     <!-- Map preview intentionally removed from admin orders UI -->
 
+    <div class="table-scroll">
     <table class="items-table">
       <thead>
         <tr>
@@ -63,6 +68,7 @@
         </tr>
       </tbody>
     </table>
+    </div>
 
     <div class="order-footer">
       <strong>Total:</strong> ₹{{ order.totalAmount }}

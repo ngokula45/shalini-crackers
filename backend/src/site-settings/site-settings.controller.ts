@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Patch, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Header, Patch, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { SiteSettingsService } from './site-settings.service';
@@ -10,6 +10,7 @@ export class SiteSettingsPublicController {
   constructor(private settingsService: SiteSettingsService) {}
 
   @Get('public')
+  @Header('Cache-Control', 'public, max-age=60, stale-while-revalidate=300')
   @ApiOperation({ summary: 'Get public business/contact information' })
   async getPublic() {
     const settings = await this.settingsService.get();

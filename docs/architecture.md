@@ -4,14 +4,14 @@
 
 ```text
                          ┌─────────────────────┐
-                         │   Consumer Angular   │  Netlify (www.clientdomain.in)
+                         │   Consumer Angular   │  Netlify (www.<production-domain>)
                          │   (no login)         │
                          └──────────┬───────────┘
                                     │ HTTPS (public REST calls)
                                     ▼
 ┌───────────────────┐    ┌──────────────────────┐    ┌────────────────────┐
 │   Admin Angular    │───▶│      NestJS API       │───▶│   MongoDB Atlas    │
-│ (JWT login required)│  │ (api.clientdomain.in) │    │ (product metadata, │
+│ (JWT login required)│  │ (api.<production-domain>) │    │ (product metadata, │
 │ Netlify             │  │ Render                │    │  categories, admin, │
 └────────────────────┘   └──────────┬────────────┘    │  site settings)     │
                                      │                  └────────────────────┘

@@ -62,4 +62,9 @@ export class OrdersService {
     if (!order) throw new NotFoundException('Order not found');
     return { deleted: true };
   }
+
+  async removeCompleted() {
+    const result = await this.orderModel.deleteMany({ status: 'completed' });
+    return { deleted: true, deletedCount: result.deletedCount };
+  }
 }

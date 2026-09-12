@@ -39,4 +39,8 @@ export class OrderService {
   remove(id: string) {
     return this.http.delete(`${this.base}/${id}`);
   }
+
+  removeCompleted() {
+    return this.http.delete<{ deleted: boolean; deletedCount: number }>(`${this.base}/completed`);
+  }
 }

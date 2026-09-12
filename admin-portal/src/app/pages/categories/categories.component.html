@@ -39,7 +39,8 @@
   <div class="card">
     <h2>All Categories</h2>
     <p *ngIf="loading">Loading…</p>
-    <table *ngIf="!loading">
+    <div class="table-scroll" *ngIf="!loading">
+    <table>
       <thead>
         <tr><th>Name</th><th>Sort</th><th>Status</th><th></th></tr>
       </thead>
@@ -58,6 +59,7 @@
         </tr>
       </tbody>
     </table>
+    </div>
     <p *ngIf="!loading && categories.length === 0">No categories yet.</p>
   </div>
 </div>

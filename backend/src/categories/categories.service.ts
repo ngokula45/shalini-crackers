@@ -32,7 +32,11 @@ export class CategoriesService {
   }
 
   async findActiveForPublic() {
-    return this.categoryModel.find({ isActive: true }).sort({ sortOrder: 1, name: 1 });
+    return this.categoryModel
+      .find({ isActive: true })
+      .select('name slug description sortOrder isActive')
+      .sort({ sortOrder: 1, name: 1 })
+      .lean();
   }
 
   async findOneBySlugPublic(slug: string) {

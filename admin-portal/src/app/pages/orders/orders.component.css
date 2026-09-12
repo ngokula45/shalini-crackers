@@ -25,8 +25,17 @@
 .filter-tabs { display:flex; gap:8px; margin-bottom:12px; }
 .filter-tabs button { padding:6px 10px; border-radius:8px; border:1px solid #ddd; background:transparent; cursor:pointer; }
 .filter-tabs button.active { background:linear-gradient(90deg,#f0f4ff,#eef8f3); border-color:#cdd7f2; }
+.delete-completed-btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; margin-left: auto; padding: 6px 9px; color: #b33a3a; border-color: #e6bcbc !important; }
+.delete-completed-btn:hover { background: #fff0f0 !important; }
+.delete-completed-btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.5; }
 /* order-map removed for admin UI */
 .items-table { width: 100%; border-collapse: collapse; margin-top: 16px; }
 .items-table th, .items-table td { text-align: left; padding: 8px 10px; border-bottom: 1px solid #e8e8e8; }
 .order-footer { margin-top: 16px; text-align: right; }
 @media (max-width: 720px) { .order-header { flex-direction: column; align-items: flex-start; } .header-right { width: 100%; justify-content: flex-start; } }
+@media (max-width: 600px) {
+  .filter-tabs { flex-wrap: wrap; }
+  .delete-completed-btn { margin-left: 0; }
+  .table-scroll .items-table { min-width: 560px; }
+  .order-card { padding: 16px; }
+}

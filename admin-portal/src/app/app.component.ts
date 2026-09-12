@@ -19,7 +19,11 @@ import { SidebarComponent } from './shared/sidebar/sidebar.component';
   `,
   styles: [`
     .shell { display: flex; min-height: 100vh; }
-    .content { flex: 1; padding: 24px; max-width: 1100px; }
+    .content { flex: 1; min-width: 0; padding: 24px; max-width: 1100px; }
+    @media (max-width: 1000px) {
+      .shell { display: block; }
+      .content { width: 100%; padding: 18px 14px 28px; }
+    }
   `],
 })
 export class AppComponent {

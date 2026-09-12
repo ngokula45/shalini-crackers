@@ -6,6 +6,8 @@ import { UpdateSiteSettingsDto } from './dto/update-site-settings.dto';
 
 @Injectable()
 export class SiteSettingsService {
+  private embedCache = new Map<string, { value?: string; expiresAt: number }>();
+
   constructor(
     @InjectModel(SiteSettings.name) private settingsModel: Model<SiteSettingsDocument>,
   ) {}
@@ -32,6 +34,9 @@ export class SiteSettingsService {
       return undefined;
     }
 
+    const cached = this.embedCache.get(configuredUrl);
+    if (cached && cached.expiresAt > Date.now()) return cached.value;
+
     try {
       const response = await fetch(configuredUrl, {
         redirect: 'follow',
@@ -44,10 +49,13 @@ export class SiteSettingsService {
       const placeName = placeMatch?.[1]?.replace(/\+/g, ' ');
       const query = [placeName, latitude, longitude].filter(Boolean).join(', ');
 
-      return query
+      const value = query
         ? `https://www.google.com/maps?q=${encodeURIComponent(query)}&output=embed`
         : undefined;
+      this.embedCache.set(configuredUrl, { value, expiresAt: Date.now() + 15 * 60 * 1000 });
+      return value;
     } catch {
+      this.embedCache.set(configuredUrl, { expiresAt: Date.now() + 60 * 1000 });
       return undefined;
     }
   }

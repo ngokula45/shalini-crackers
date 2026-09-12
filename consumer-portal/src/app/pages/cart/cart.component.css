@@ -76,3 +76,10 @@
 .whatsapp-btn { background: #168c4a; box-shadow: 0 12px 22px rgba(22, 140, 74, 0.18); }
 .whatsapp-btn:hover { background: #0f6f3a; }
 @media (max-width: 820px) { .cart-layout { grid-template-columns: 1fr; } }
+@media (max-width: 600px) {
+  .cart-page { padding: 22px 0 30px; }
+  .cart-item { grid-template-columns: 72px 1fr; gap: 12px; padding: 14px; }
+  .cart-item img { width: 72px; height: 72px; }
+  .remove-btn { grid-column: 2; justify-self: start; padding: 2px 0; }
+  .checkout-box { padding: 18px; }
+}

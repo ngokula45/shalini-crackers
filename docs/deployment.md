@@ -6,7 +6,7 @@
 |------|-----------------------|------------------------|---------------------------|----------------------------|
 | Local| localhost:4200         | localhost:4300          | localhost:3000             | local MongoDB               |
 | QA   | Netlify (QA site)      | Netlify (QA site)       | Render (QA service)        | MongoDB Atlas `cracker_shop_qa` |
-| Prod | www.clientdomain.in     | admin.clientdomain.in   | api.clientdomain.in        | MongoDB Atlas `cracker_shop_prod` |
+| Prod | `www.<production-domain>` | `admin.<production-domain>` | `api.<production-domain>` | MongoDB Atlas `cracker_shop_prod` |
 
 Never point a QA deployment at the production database, and never run destructive test operations against production data.
 
@@ -64,15 +64,18 @@ Never point a QA deployment at the production database, and never run destructiv
 3. Same SPA redirect rule as above.
 4. Confirm `environment.prod.ts` / `environment.qa.ts` point at the same API host as the consumer site's environment.
 
-## 6. Domain & DNS
+## 6. Production domain & DNS
 
-1. Client registers/owns the domain (e.g. `clientdomain.in`).
+1. Client registers and owns the final brand domain with GoDaddy or another registrar. Prefer a short, easy-to-spell name such as `shalinicrackers.in` if available. The registrar and hosting provider can be different.
 2. Point DNS:
-   - `www.clientdomain.in` → Consumer Netlify site (Netlify custom domain + provided DNS records)
-   - `admin.clientdomain.in` → Admin Netlify site
-   - `api.clientdomain.in` → Backend host (Render custom domain / CNAME)
-3. Enable HTTPS (Netlify and Render both provision this automatically once DNS is verified).
-4. Update `CORS_ORIGINS` on the backend to include the final custom domains once DNS is live.
+   - `www.<production-domain>` → Consumer Netlify site (Netlify custom domain + provided DNS records)
+   - `admin.<production-domain>` → Admin Netlify site
+   - `api.<production-domain>` → Backend host (Render custom domain / CNAME)
+3. Select one public URL, preferably `https://www.<production-domain>`, and redirect the bare domain to it. Use that same URL for the consumer app's canonical tag, Open Graph URLs, JSON-LD, and sitemap.
+4. Replace the placeholder API URL in `consumer-portal/src/environments/environment.prod.ts` and `admin-portal/src/environments/environment.prod.ts` with `https://api.<production-domain>/api/v1`.
+5. Set backend `CORS_ORIGINS` to the production consumer and admin URLs, for example `https://www.<production-domain>,https://admin.<production-domain>`.
+6. Enable HTTPS (Netlify and Render provision certificates after the custom domains are verified).
+7. Submit `https://www.<production-domain>/sitemap.xml` in Google Search Console after DNS and deployment are live.
 
 ## 7. QA checklist
 
@@ -81,6 +84,8 @@ Run through `README.md`'s critical vertical flow end-to-end on the QA deployment
 ## 8. Production go-live
 
 1. Repeat steps 3–6 with production environment variables and the production Atlas database.
-2. Seed the production admin with a fresh, unique password (never reuse the QA admin password).
-3. Verify the critical vertical flow once more against production.
-4. Hand over per `docs/handover.md`.
+2. Replace the temporary Netlify URL in `consumer-portal/src/index.html` and `consumer-portal/src/sitemap.xml` with the selected public production URL, then rebuild and redeploy the consumer portal.
+3. Seed the production admin with a fresh, unique password (never reuse the QA admin password).
+4. Verify the critical vertical flow once more against production.
+5. Verify the custom domain, HTTPS redirect, `robots.txt`, sitemap, canonical URL, and Google Search Console property.
+6. Hand over per `docs/handover.md`.

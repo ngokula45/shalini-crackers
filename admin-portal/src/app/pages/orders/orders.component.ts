@@ -28,6 +28,10 @@ export class OrdersComponent implements OnInit {
     return this.orders.filter(o => (o.status || 'pending') === this.selectedFilter);
   }
 
+  get completedOrdersCount(): number {
+    return this.orders.filter((order) => order.status === 'completed').length;
+  }
+
   // getMapEmbed removed — admin view will not render embedded maps
 
   load() {
@@ -56,6 +60,17 @@ export class OrdersComponent implements OnInit {
     this.orderService.remove(order._id).subscribe({
       next: () => this.load(),
       error: () => alert('Failed to delete order'),
+    });
+  }
+
+  deleteCompleted() {
+    const completedCount = this.completedOrdersCount;
+    if (!completedCount) return;
+    const ok = confirm(`Permanently delete all ${completedCount} completed orders? This cannot be undone.`);
+    if (!ok) return;
+    this.orderService.removeCompleted().subscribe({
+      next: () => this.load(),
+      error: () => alert('Failed to delete completed orders'),
     });
   }
 }

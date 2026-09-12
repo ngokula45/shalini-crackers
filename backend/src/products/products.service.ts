@@ -78,8 +78,10 @@ export class ProductsService {
 
     return this.productModel
       .find(filter)
+      .select('name slug categoryId description price originalPrice offerPrice priceMode youtubeVideoUrl showPrice imageUrl sortOrder isActive')
       .populate({ path: 'categoryId', match: { isActive: true } })
       .sort({ sortOrder: 1, name: 1 })
+      .lean()
       .then((products) => products.filter((p) => p.categoryId)); // drop products whose category got deactivated
   }
 

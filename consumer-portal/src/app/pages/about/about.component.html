@@ -58,4 +58,8 @@
 .about-card li + li { margin-top: 8px; }
 .about-card.premium { background: linear-gradient(145deg, #f9f3eb, #fff); }
 .info-panel { padding: 24px; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; }
+@media (max-width: 700px) {
+  .about-hero, .about-card, .info-panel { padding: 20px; }
+  .about-grid { grid-template-columns: 1fr; }
+}
 </style>

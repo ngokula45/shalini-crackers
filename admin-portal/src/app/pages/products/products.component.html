@@ -91,7 +91,8 @@
   <div class="card">
     <h2>All Products</h2>
     <p *ngIf="loading">Loading…</p>
-    <table *ngIf="!loading">
+    <div class="table-scroll" *ngIf="!loading">
+    <table>
       <thead>
         <tr><th>Image</th><th>Name</th><th>Category</th><th>Price</th><th>Status</th><th></th></tr>
       </thead>
@@ -118,6 +119,7 @@
         </tr>
       </tbody>
     </table>
+    </div>
     <p *ngIf="!loading && products.length === 0">No products yet.</p>
   </div>
 </div>

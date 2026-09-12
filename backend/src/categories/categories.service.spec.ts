@@ -16,7 +16,11 @@ describe('CategoriesService', () => {
           useValue: {
             findOne: jest.fn().mockResolvedValue(null),
             create: jest.fn().mockImplementation((doc) => Promise.resolve({ _id: '1', ...doc })),
-            find: jest.fn().mockReturnValue({ sort: jest.fn().mockResolvedValue([]) }),
+            find: jest.fn().mockReturnValue({
+              select: jest.fn().mockReturnValue({
+                sort: jest.fn().mockReturnValue({ lean: jest.fn().mockResolvedValue([]) }),
+              }),
+            }),
             findById: jest.fn(),
           },
         },
