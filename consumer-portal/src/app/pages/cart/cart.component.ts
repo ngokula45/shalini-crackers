@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
@@ -9,11 +9,12 @@ import { Product } from '../../models/product.model';
 import { SiteSettings } from '../../models/site-settings.model';
 import { ApiService } from '../../services/api.service';
 import { resolveImageUrl } from '../../shared/resolve-image-url';
+import { QuantitySelectorComponent } from '../../shared/quantity-selector/quantity-selector.component';
 
 @Component({
   selector: 'app-cart',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, DecimalPipe, FormsModule, RouterLink, QuantitySelectorComponent],
   templateUrl: './cart.component.html',
   styleUrl: './cart.component.css',
 })
@@ -40,7 +41,15 @@ export class CartComponent {
   }
 
   getTotal() {
+    return this.getOrderPrice() + this.getPackagingPrice();
+  }
+
+  getOrderPrice() {
     return this.cart.getTotal();
+  }
+
+  getPackagingPrice() {
+    return Math.round(this.getOrderPrice() * 0.015 * 100) / 100;
   }
 
   updateQuantity(productId: string, quantity: number) {
@@ -125,8 +134,11 @@ export class CartComponent {
       '',
       'Items:',
       items,
+      `Order Price: ₹${this.getOrderPrice()}`,
+      `Packing Charges: ₹${this.getPackagingPrice().toFixed(2)}`,
+      `Total Price: ₹${this.getTotal().toFixed(2)}`,
       `Total: ₹${payload.items.reduce((total, item) => total + item.total, 0)}`,
-    ].join('\n');
+    ].filter((line) => !line.startsWith('Total:')).join('\n');
 
     return `https://wa.me/${businessNumber}?text=${encodeURIComponent(message)}`;
   }

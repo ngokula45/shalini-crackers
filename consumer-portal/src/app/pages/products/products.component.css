@@ -17,4 +17,6 @@
 .original-price { text-decoration: line-through; color: #777; font-size: 0.9rem; }
 .price { color: var(--color-primary); font-weight: 700; margin: 0; }
 .saving { color: #168c4a; font-size: 0.68rem; font-weight: 800; }
-.add-to-cart { margin-top: 12px; width: 100%; }
+.product-card-actions { display: grid; gap: 10px; margin-top: 14px; }
+.product-card-actions app-quantity-selector { justify-self: start; }
+.add-to-cart { width: 100%; }

@@ -71,7 +71,9 @@
     </div>
 
     <div class="order-footer">
-      <strong>Total:</strong> ₹{{ order.totalAmount }}
+      <div class="price-line"><span>Order Price</span><strong>₹{{ order.orderPrice ?? order.totalAmount }}</strong></div>
+      <div class="price-line"><span>Packing Charges (1.5%)</span><strong>₹{{ order.packagingPrice ?? 0 }}</strong></div>
+      <div class="price-line total-price"><span>Total Price</span><strong>₹{{ order.totalAmount }}</strong></div>
     </div>
   </div>
 </div>

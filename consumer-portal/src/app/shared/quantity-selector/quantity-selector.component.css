@@ -1,0 +1,32 @@
+.quantity-selector {
+  display: inline-grid;
+  grid-template-columns: 34px minmax(30px, auto) 34px;
+  align-items: center;
+  min-height: 38px;
+  border: 1px solid #e1d4cc;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 2px 5px rgba(68, 30, 21, 0.05);
+}
+
+.quantity-selector button {
+  width: 34px;
+  height: 36px;
+  border: 0;
+  background: transparent;
+  color: var(--color-primary);
+  font-size: 1.2rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.16s ease, color 0.16s ease;
+}
+
+.quantity-selector button:hover:not(:disabled) { background: #fbefec; }
+.quantity-selector button:focus-visible { outline: 2px solid var(--color-primary); outline-offset: -2px; }
+.quantity-selector button:disabled { color: #cbbfba; cursor: not-allowed; }
+.quantity-selector output { min-width: 30px; text-align: center; color: var(--color-primary-dark); font-weight: 800; font-size: 0.9rem; }
+
+.quantity-selector.compact { grid-template-columns: 30px minmax(28px, auto) 30px; min-height: 32px; border-radius: 8px; }
+.quantity-selector.compact button { width: 30px; height: 30px; font-size: 1rem; }
+.quantity-selector.compact output { font-size: 0.82rem; }

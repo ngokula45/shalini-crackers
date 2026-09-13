@@ -19,6 +19,8 @@ export interface Order {
   source?: string;
   status?: string;
   items: OrderItem[];
+  orderPrice?: number;
+  packagingPrice?: number;
   totalAmount: number;
   createdAt?: string;
 }

@@ -27,13 +27,14 @@ export class CartService {
     return this.read();
   }
 
-  add(product: Product) {
+  add(product: Product, quantity = 1) {
     const items = this.read();
+    const amount = Math.max(1, Math.floor(quantity) || 1);
     const existing = items.find((item) => item.product._id === product._id);
     if (existing) {
-      existing.quantity += 1;
+      existing.quantity += amount;
     } else {
-      items.push({ product, quantity: 1 });
+      items.push({ product, quantity: amount });
     }
     this.write(items);
   }

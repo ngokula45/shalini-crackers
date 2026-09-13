@@ -1,0 +1,5 @@
+<div class="quantity-selector" [class.compact]="compact" aria-label="Quantity selector">
+  <button type="button" (click)="decrease()" [disabled]="quantity <= 1" aria-label="Decrease quantity">−</button>
+  <output [attr.aria-label]="'Quantity ' + quantity">{{ quantity }}</output>
+  <button type="button" (click)="increase()" aria-label="Increase quantity">+</button>
+</div>

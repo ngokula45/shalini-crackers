@@ -46,6 +46,12 @@ export class Order {
 
   @Prop({ required: true, default: 0 })
   totalAmount: number;
+
+  @Prop({ required: true, default: 0 })
+  orderPrice: number;
+
+  @Prop({ required: true, default: 0 })
+  packagingPrice: number;
   
   @Prop({ type: Boolean, default: false })
   archived: boolean;

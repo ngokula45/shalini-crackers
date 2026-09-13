@@ -32,8 +32,7 @@
 }
 .cart-item img { width: 100px; height: 100px; object-fit: cover; border-radius: 12px; }
 .details h3 { margin: 0 0 6px; color: var(--color-royal); }
-.qty-row { display: inline-flex; align-items: center; gap: 10px; margin-top: 10px; }
-.qty-row button { width: 30px; height: 30px; border: 1px solid #d0c5bf; border-radius: 8px; background: #fff; cursor: pointer; }
+.qty-row { display: inline-flex; align-items: center; margin-top: 10px; }
 .cart-actions { display: flex; justify-content: flex-start; padding-top: 4px; }
 .remove-btn { border: none; background: transparent; color: #b72626; cursor: pointer; font-weight: 700; }
 .checkout-column {
@@ -63,6 +62,8 @@
 }
 .totals { border-top: 1px solid #e5dbd4; padding-top: 14px; margin: 12px 0 18px; }
 .totals div { display: flex; justify-content: space-between; font-size: 1.1rem; }
+.totals div + div { margin-top: 8px; }
+.totals .total-price { margin-top: 12px; padding-top: 12px; border-top: 1px solid #e5dbd4; font-size: 1.2rem; }
 .submit-btn { width: 100%; }
 .error { color: #b00020; margin-top: 12px; }
 .empty-state, .success-box {

@@ -1,25 +1,30 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { ApiService } from '../../services/api.service';
 import { Category } from '../../models/category.model';
 import { SiteSettings } from '../../models/site-settings.model';
 import { Product } from '../../models/product.model';
 import { resolveImageUrl } from '../../shared/resolve-image-url';
+import { CartService } from '../../services/cart.service';
+import { QuantitySelectorComponent } from '../../shared/quantity-selector/quantity-selector.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, QuantitySelectorComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
 })
 export class HomeComponent implements OnInit {
   private api = inject(ApiService);
+  private cart = inject(CartService);
+  private router = inject(Router);
   categories: Category[] = [];
   settings: SiteSettings | null = null;
   loading = true;
   offerProducts: Product[] = [];
+  quantities: Record<string, number> = {};
 
   ngOnInit() {
     this.api.getSiteSettings().subscribe({ next: (s) => (this.settings = s) });
@@ -51,5 +56,18 @@ export class HomeComponent implements OnInit {
 
   resolveImageUrl(url?: string | null): string {
     return resolveImageUrl(url);
+  }
+
+  getQuantity(product: Product): number {
+    return this.quantities[product._id] ?? 1;
+  }
+
+  setQuantity(product: Product, quantity: number) {
+    this.quantities[product._id] = Math.max(1, quantity);
+  }
+
+  addToCart(product: Product) {
+    this.cart.add(product, this.getQuantity(product));
+    this.router.navigate(['/cart']);
   }
 }

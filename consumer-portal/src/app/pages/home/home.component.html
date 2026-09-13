@@ -34,11 +34,17 @@
 <section class="container offer-section" *ngIf="offerProducts.length">
   <div class="section-title-row"><div><p class="eyebrow">CELEBRATION PICKS</p><h2>Festival offers</h2></div><a routerLink="/products" class="text-link">See all crackers →</a></div>
   <div class="offer-grid">
-    <a *ngFor="let product of offerProducts" [routerLink]="['/products', product.slug]" class="card offer-card">
+    <div *ngFor="let product of offerProducts" class="card offer-card">
       <span class="offer-ribbon">OFFER</span>
+      <a [routerLink]="['/products', product.slug]" class="offer-product-link">
       <img *ngIf="product.imageUrl" [src]="resolveImageUrl(product.imageUrl)" [alt]="product.name" />
       <div class="offer-body"><h3>{{ product.name }}</h3><p class="offer-price">₹{{ product.offerPrice ?? product.price }}</p><del *ngIf="product.originalPrice != null">₹{{ product.originalPrice }}</del><span *ngIf="getSavings(product) != null" class="saving">Save ₹{{ getSavings(product) }}</span></div>
-    </a>
+      </a>
+      <div class="card-cart-actions">
+        <app-quantity-selector [quantity]="getQuantity(product)" (quantityChange)="setQuantity(product, $event)"></app-quantity-selector>
+        <button type="button" class="btn add-to-cart" (click)="addToCart(product)">Add {{ getQuantity(product) }} to Cart</button>
+      </div>
+    </div>
   </div>
 </section>
 

@@ -7,11 +7,12 @@ import { Product } from '../../models/product.model';
 import { Category } from '../../models/category.model';
 import { resolveImageUrl } from '../../shared/resolve-image-url';
 import { CartService } from '../../services/cart.service';
+import { QuantitySelectorComponent } from '../../shared/quantity-selector/quantity-selector.component';
 
 @Component({
   selector: 'app-products',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, QuantitySelectorComponent],
   templateUrl: './products.component.html',
   styleUrl: './products.component.css',
 })
@@ -27,6 +28,7 @@ export class ProductsComponent implements OnInit {
   searchTerm = '';
   offerOnly = false;
   loading = true;
+  quantities: Record<string, number> = {};
 
   ngOnInit() {
     this.api.getCategories().subscribe({ next: (c) => (this.categories = c) });
@@ -86,8 +88,16 @@ export class ProductsComponent implements OnInit {
     return Math.max(0, product.originalPrice - product.offerPrice);
   }
 
+  getQuantity(product: Product): number {
+    return this.quantities[product._id] ?? 1;
+  }
+
+  setQuantity(product: Product, quantity: number) {
+    this.quantities[product._id] = Math.max(1, quantity);
+  }
+
   addToCart(product: Product) {
-    this.cart.add(product);
+    this.cart.add(product, this.getQuantity(product));
     this.router.navigate(['/cart']);
   }
 }

@@ -31,11 +31,16 @@
 /* order-map removed for admin UI */
 .items-table { width: 100%; border-collapse: collapse; margin-top: 16px; }
 .items-table th, .items-table td { text-align: left; padding: 8px 10px; border-bottom: 1px solid #e8e8e8; }
-.order-footer { margin-top: 16px; text-align: right; }
+.order-footer { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 16px; padding-top: 14px; border-top: 1px solid #e8e8e8; }
+.price-line { display: grid; gap: 4px; color: #4d4d4d; }
+.price-line strong { color: #171c35; font-size: 1.12rem; }
+.price-line.total-price { text-align: right; }
 @media (max-width: 720px) { .order-header { flex-direction: column; align-items: flex-start; } .header-right { width: 100%; justify-content: flex-start; } }
 @media (max-width: 600px) {
   .filter-tabs { flex-wrap: wrap; }
   .delete-completed-btn { margin-left: 0; }
   .table-scroll .items-table { min-width: 560px; }
   .order-card { padding: 16px; }
+  .order-footer { grid-template-columns: 1fr; gap: 10px; }
+  .price-line.total-price { text-align: left; }
 }

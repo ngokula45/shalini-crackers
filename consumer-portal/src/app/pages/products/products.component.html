@@ -42,7 +42,10 @@
           <span class="price">{{ getDisplayPrice(p) }}</span>
           <span *ngIf="getSavings(p) != null" class="saving">Save ₹{{ getSavings(p) }}</span>
         </div>
-        <button type="button" class="btn add-to-cart" (click)="addToCart(p)">Add to Cart</button>
+        <div class="product-card-actions">
+          <app-quantity-selector [quantity]="getQuantity(p)" (quantityChange)="setQuantity(p, $event)"></app-quantity-selector>
+          <button type="button" class="btn add-to-cart" (click)="addToCart(p)">Add {{ getQuantity(p) }} to Cart</button>
+        </div>
       </div>
     </div>
   </div>

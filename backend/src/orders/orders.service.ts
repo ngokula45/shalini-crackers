@@ -9,19 +9,24 @@ export class OrdersService {
   constructor(@InjectModel(Order.name) private orderModel: Model<OrderDocument>) {}
 
   async create(dto: CreateOrderDto) {
-    const totalAmount = dto.items.reduce((sum, item) => {
+    const items = dto.items.map((item) => {
       const unitPrice = Number(item.unitPrice || 0);
       const quantity = Number(item.quantity || 0);
-      const itemTotal = Number(item.total || unitPrice * quantity);
-      return sum + itemTotal;
-    }, 0);
+      return { ...item, unitPrice, quantity, total: unitPrice * quantity };
+    });
+    const orderPrice = items.reduce((sum, item) => sum + item.total, 0);
+    const packagingPrice = Math.round(orderPrice * 0.015 * 100) / 100;
+    const totalAmount = Math.round((orderPrice + packagingPrice) * 100) / 100;
 
     return this.orderModel.create({
       ...dto,
+      items,
       whatsappNumber: dto.whatsappNumber || '',
       address: dto.address || '',
       source: dto.source || 'Website',
       status: 'pending',
+      orderPrice,
+      packagingPrice,
       totalAmount,
     });
   }
