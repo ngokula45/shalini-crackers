@@ -36,13 +36,20 @@
   <div class="offer-grid">
     <div *ngFor="let product of offerProducts" class="card offer-card">
       <span class="offer-ribbon">OFFER</span>
-      <a [routerLink]="['/products', product.slug]" class="offer-product-link">
+      <a [routerLink]="['/products', product.slug]" class="offer-product-link" [attr.aria-label]="(product.youtubeVideoUrl ? 'Watch video and view details for ' : 'View details for ') + product.name">
+      <div class="product-media-link">
       <img *ngIf="product.imageUrl" [src]="resolveImageUrl(product.imageUrl)" [alt]="product.name" />
+      <span *ngIf="product.youtubeVideoUrl" class="video-badge" aria-hidden="true">▶ Video</span>
+      <span class="media-overlay"><span>{{ product.youtubeVideoUrl ? 'Watch video & details' : 'View details' }}</span><span aria-hidden="true">→</span></span>
+      </div>
       <div class="offer-body"><h3>{{ product.name }}</h3><p class="offer-price">₹{{ product.offerPrice ?? product.price }}</p><del *ngIf="product.originalPrice != null">₹{{ product.originalPrice }}</del><span *ngIf="getSavings(product) != null" class="saving">Save ₹{{ getSavings(product) }}</span></div>
       </a>
       <div class="card-cart-actions">
-        <app-quantity-selector [quantity]="getQuantity(product)" (quantityChange)="setQuantity(product, $event)"></app-quantity-selector>
-        <button type="button" class="btn add-to-cart" (click)="addToCart(product)">Add {{ getQuantity(product) }} to Cart</button>
+        <div class="selection-summary">
+          <app-quantity-selector [quantity]="getQuantity(product)" [min]="0" (quantityChange)="setQuantity(product, $event)"></app-quantity-selector>
+          <div class="selected-total"><span>Selected total</span><strong>₹{{ getSelectedTotal(product) | number:'1.2-2' }}</strong></div>
+        </div>
+        <button type="button" class="btn add-to-cart" [disabled]="getQuantity(product) === 0" (click)="addToCart(product)">{{ getQuantity(product) ? 'Add ' + getQuantity(product) + ' to Cart' : 'Select Quantity' }}</button>
       </div>
     </div>
   </div>

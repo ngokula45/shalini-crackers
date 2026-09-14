@@ -24,6 +24,7 @@
           <div class="qty-row">
             <app-quantity-selector [quantity]="item.quantity" [compact]="true" (quantityChange)="updateQuantity(item.product._id, $event)"></app-quantity-selector>
           </div>
+          <p class="item-total">Item total: <strong>₹{{ getItemTotal(item.product, item.quantity) | number:'1.2-2' }}</strong></p>
         </div>
         <button type="button" class="remove-btn" (click)="remove(item.product._id)">Remove</button>
       </div>

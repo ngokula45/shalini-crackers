@@ -33,6 +33,8 @@
 .cart-item img { width: 100px; height: 100px; object-fit: cover; border-radius: 12px; }
 .details h3 { margin: 0 0 6px; color: var(--color-royal); }
 .qty-row { display: inline-flex; align-items: center; margin-top: 10px; }
+.item-total { margin: 10px 0 0; color: var(--color-muted); font-size: 0.86rem; }
+.item-total strong { color: var(--color-primary); font-size: 1rem; }
 .cart-actions { display: flex; justify-content: flex-start; padding-top: 4px; }
 .remove-btn { border: none; background: transparent; color: #b72626; cursor: pointer; font-weight: 700; }
 .checkout-column {

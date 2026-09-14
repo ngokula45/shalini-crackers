@@ -8,11 +8,12 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 })
 export class QuantitySelectorComponent {
   @Input({ required: true }) quantity = 1;
+  @Input() min = 1;
   @Input() compact = false;
   @Output() quantityChange = new EventEmitter<number>();
 
   decrease() {
-    this.quantityChange.emit(Math.max(1, this.quantity - 1));
+    this.quantityChange.emit(Math.max(this.min, this.quantity - 1));
   }
 
   increase() {

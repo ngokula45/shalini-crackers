@@ -89,15 +89,22 @@ export class ProductsComponent implements OnInit {
   }
 
   getQuantity(product: Product): number {
-    return this.quantities[product._id] ?? 1;
+    return this.quantities[product._id] ?? 0;
   }
 
   setQuantity(product: Product, quantity: number) {
-    this.quantities[product._id] = Math.max(1, quantity);
+    this.quantities[product._id] = Math.max(0, quantity);
   }
 
   addToCart(product: Product) {
-    this.cart.add(product, this.getQuantity(product));
+    const quantity = this.getQuantity(product);
+    if (quantity < 1) return;
+    this.cart.add(product, quantity);
     this.router.navigate(['/cart']);
+  }
+
+  getSelectedTotal(product: Product): number {
+    const price = product.priceMode === 'offer' ? (product.offerPrice ?? product.price ?? 0) : (product.price ?? 0);
+    return price * this.getQuantity(product);
   }
 }

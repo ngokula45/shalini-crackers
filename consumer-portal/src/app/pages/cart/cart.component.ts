@@ -67,6 +67,10 @@ export class CartComponent {
     return product.price ?? 0;
   }
 
+  getItemTotal(product: Product, quantity: number): number {
+    return this.getPrice(product) * quantity;
+  }
+
   resolveImageUrl(url?: string | null): string {
     return resolveImageUrl(url);
   }
