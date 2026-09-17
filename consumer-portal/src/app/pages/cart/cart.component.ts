@@ -19,6 +19,7 @@ import { QuantitySelectorComponent } from '../../shared/quantity-selector/quanti
   styleUrl: './cart.component.css',
 })
 export class CartComponent {
+  readonly minimumOrderPrice = 3000;
   private cart = inject(CartService);
   private http = inject(HttpClient);
   private api = inject(ApiService);
@@ -52,6 +53,14 @@ export class CartComponent {
     return Math.round(this.getOrderPrice() * 0.015 * 100) / 100;
   }
 
+  get meetsMinimumOrderPrice(): boolean {
+    return this.getOrderPrice() >= this.minimumOrderPrice;
+  }
+
+  get amountUntilMinimumOrder(): number {
+    return Math.max(0, this.minimumOrderPrice - this.getOrderPrice());
+  }
+
   updateQuantity(productId: string, quantity: number) {
     this.cart.updateQuantity(productId, quantity);
     this.items = this.cart.getItems();
@@ -76,6 +85,11 @@ export class CartComponent {
   }
 
   submitOrder() {
+    if (!this.meetsMinimumOrderPrice) {
+      this.error = `A minimum order value of ₹${this.minimumOrderPrice.toLocaleString('en-IN')} is required to submit an order.`;
+      return;
+    }
+
     if (!this.customerName || !this.mobileNumber || this.items.length === 0) {
       this.error = 'Please enter customer name, mobile number and at least one product.';
       return;
@@ -92,6 +106,12 @@ export class CartComponent {
       source: this.source,
       items: this.items.map((item) => ({
         productId: item.product._id,
+        quantity: item.quantity,
+      })),
+    };
+    const whatsappPayload = {
+      ...payload,
+      items: this.items.map((item) => ({
         productName: item.product.name,
         quantity: item.quantity,
         unitPrice: this.getPrice(item.product),
@@ -103,13 +123,13 @@ export class CartComponent {
       next: () => {
         this.submitting = false;
         this.submitted = true;
-        this.whatsappUrl = this.buildWhatsappUrl(payload);
+        this.whatsappUrl = this.buildWhatsappUrl(whatsappPayload);
         this.cart.clear();
         this.items = [];
       },
-      error: () => {
+      error: (response) => {
         this.submitting = false;
-        this.error = 'Unable to place order right now. Please try again.';
+        this.error = response?.error?.message || 'Unable to place order right now. Please try again.';
       },
     });
   }

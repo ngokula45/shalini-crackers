@@ -1,32 +1,17 @@
 import { Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsArray, IsNotEmpty, IsNumber, IsOptional, IsString, Min, ValidateNested } from 'class-validator';
+import { IsArray, IsMongoId, IsNotEmpty, IsNumber, IsOptional, IsString, Min, ValidateNested } from 'class-validator';
 
 export class OrderItemDto {
-  @ApiPropertyOptional({ example: '507f1f77bcf86cd799439011' })
-  @IsOptional()
-  @IsString()
-  productId?: string;
-
-  @ApiProperty({ example: 'Diwali Sparklers' })
-  @IsString()
-  @IsNotEmpty()
-  productName: string;
+  @ApiProperty({ example: '507f1f77bcf86cd799439011' })
+  @IsMongoId()
+  productId: string;
 
   @ApiProperty({ example: 2 })
   @IsNumber()
   @Min(1)
   quantity: number;
 
-  @ApiProperty({ example: 399 })
-  @IsNumber()
-  @Min(0)
-  unitPrice: number;
-
-  @ApiProperty({ example: 798 })
-  @IsNumber()
-  @Min(0)
-  total: number;
 }
 
 export class CreateOrderDto {

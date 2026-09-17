@@ -1,5 +1,6 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Res, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Response } from 'express';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { OrdersService } from './orders.service';
@@ -33,6 +34,16 @@ export class OrdersAdminController {
   @ApiOperation({ summary: 'Get an order by ID' })
   findOne(@Param('id') id: string) {
     return this.ordersService.findOneByIdForAdmin(id);
+  }
+
+  @Get(':id/pdf')
+  @ApiOperation({ summary: 'Download a detailed PDF for an order' })
+  async downloadPdf(@Param('id') id: string, @Res() response: Response) {
+    const pdf = await this.ordersService.createPdf(id);
+    response.setHeader('Content-Type', 'application/pdf');
+    response.setHeader('Content-Disposition', `attachment; filename="order-${id}.pdf"`);
+    pdf.pipe(response);
+    pdf.end();
   }
 
   @Patch(':id/status')

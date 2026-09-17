@@ -23,6 +23,9 @@ export class OrderItem {
 
 @Schema({ timestamps: true, collection: 'orders' })
 export class Order {
+  createdAt?: Date;
+  updatedAt?: Date;
+
   @Prop({ required: true, trim: true })
   customerName: string;
 

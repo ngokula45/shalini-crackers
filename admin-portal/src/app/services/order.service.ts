@@ -34,6 +34,10 @@ export class OrderService {
     return this.http.get<Order[]>(this.base);
   }
 
+  downloadPdf(id: string) {
+    return this.http.get(`${this.base}/${id}/pdf`, { responseType: 'blob' });
+  }
+
   updateStatus(id: string, status: 'pending' | 'confirmed' | 'completed') {
     return this.http.patch<Order>(`${this.base}/${id}/status`, { status });
   }

@@ -71,7 +71,10 @@
         </div>
 
         <p *ngIf="error" class="error">{{ error }}</p>
-        <button type="button" class="btn submit-btn" [disabled]="submitting" (click)="submitOrder()">
+        <p *ngIf="!meetsMinimumOrderPrice" class="minimum-order-notice" role="status">
+          * A minimum order value of ₹{{ minimumOrderPrice | number:'1.0-0' }} applies. Add ₹{{ amountUntilMinimumOrder | number:'1.0-0' }} more to place your order.
+        </p>
+        <button type="button" class="btn submit-btn" [disabled]="submitting || !meetsMinimumOrderPrice" (click)="submitOrder()">
           {{ submitting ? 'Submitting…' : 'Submit Order' }}
         </button>
       </div>

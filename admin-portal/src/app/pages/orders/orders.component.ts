@@ -53,6 +53,44 @@ export class OrdersComponent implements OnInit {
     });
   }
 
+  downloadPdf(order: Order) {
+    if (!order?._id) return;
+    this.orderService.downloadPdf(order._id).subscribe({
+      next: (pdf) => {
+        const url = URL.createObjectURL(pdf);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `order-${order._id}.pdf`;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        window.setTimeout(() => URL.revokeObjectURL(url), 0);
+      },
+      error: () => alert('Failed to download the order PDF. Please try again.'),
+    });
+  }
+
+  printOrder(order: Order) {
+    if (!order?._id) return;
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) {
+      alert('Please allow pop-ups to print the order.');
+      return;
+    }
+
+    this.orderService.downloadPdf(order._id).subscribe({
+      next: (pdf) => {
+        const url = URL.createObjectURL(pdf);
+        printWindow.location.href = url;
+        window.setTimeout(() => URL.revokeObjectURL(url), 60_000);
+      },
+      error: () => {
+        printWindow.close();
+        alert('Failed to prepare the order for printing. Please try again.');
+      },
+    });
+  }
+
   deleteOrder(order: Order) {
     if (!order?._id) return;
     const ok = confirm(`Delete order for ${order.customerName || 'this customer'}? This cannot be undone.`);
