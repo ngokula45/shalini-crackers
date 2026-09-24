@@ -1,30 +1,33 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterLink } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { ApiService } from '../../services/api.service';
 import { Category } from '../../models/category.model';
 import { SiteSettings } from '../../models/site-settings.model';
 import { Product } from '../../models/product.model';
 import { resolveImageUrl } from '../../shared/resolve-image-url';
-import { CartService } from '../../services/cart.service';
+import { ProductSelectionService } from '../../services/product-selection.service';
 import { QuantitySelectorComponent } from '../../shared/quantity-selector/quantity-selector.component';
+import { ProductSelectionComponent } from '../../shared/product-selection/product-selection.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterLink, QuantitySelectorComponent],
+  imports: [CommonModule, RouterLink, QuantitySelectorComponent, ProductSelectionComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
 })
 export class HomeComponent implements OnInit {
   private api = inject(ApiService);
-  private cart = inject(CartService);
-  private router = inject(Router);
+  private selection = inject(ProductSelectionService);
   categories: Category[] = [];
   settings: SiteSettings | null = null;
   loading = true;
   offerProducts: Product[] = [];
-  quantities: Record<string, number> = {};
+
+  get hasSelection(): boolean {
+    return this.selection.getProductCount() > 0;
+  }
 
   ngOnInit() {
     this.api.getSiteSettings().subscribe({ next: (s) => (this.settings = s) });
@@ -59,21 +62,14 @@ export class HomeComponent implements OnInit {
   }
 
   getQuantity(product: Product): number {
-    return this.quantities[product._id] ?? 0;
+    return this.selection.getQuantity(product._id);
   }
 
   setQuantity(product: Product, quantity: number) {
-    this.quantities[product._id] = Math.max(0, quantity);
-  }
-
-  addToCart(product: Product) {
-    const quantity = this.getQuantity(product);
-    if (quantity < 1) return;
-    this.cart.add(product, quantity);
-    this.router.navigate(['/cart']);
+    this.selection.setQuantity(product, quantity);
   }
 
   getSelectedTotal(product: Product): number {
-    return (product.offerPrice ?? product.price ?? 0) * this.getQuantity(product);
+    return this.selection.getProductTotal(product);
   }
 }

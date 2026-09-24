@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule, DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { CartService } from '../../services/cart.service';
@@ -21,6 +21,7 @@ import { QuantitySelectorComponent } from '../../shared/quantity-selector/quanti
 export class CartComponent {
   readonly minimumOrderPrice = 3000;
   private cart = inject(CartService);
+  private route = inject(ActivatedRoute);
   private http = inject(HttpClient);
   private api = inject(ApiService);
 
@@ -36,6 +37,15 @@ export class CartComponent {
   whatsappUrl = '';
 
   private settings: SiteSettings | null = null;
+
+  get continueShoppingParams(): Record<string, string | null> {
+    const params = this.route.snapshot.queryParamMap;
+    return {
+      category: params.get('returnCategory'),
+      q: params.get('returnQ'),
+      offer: params.get('returnOffer'),
+    };
+  }
 
   constructor() {
     this.api.getSiteSettings().subscribe({ next: (settings) => (this.settings = settings) });

@@ -1,26 +1,32 @@
 <section class="container cart-page">
-  <div class="cart-hero" aria-hidden="true"></div>
+  <header class="cart-intro" *ngIf="items.length > 0 && !submitted">
+    <span class="cart-eyebrow">YOUR CRACKERS, READY TO ORDER</span>
+    <div class="cart-intro-row">
+      <div><h1>Your order</h1><p>Review your selection and share the details for a smooth order.</p></div>
+      <div class="cart-step" aria-label="Checkout step 1 of 2"><span>01</span><span>Review &amp; details</span></div>
+    </div>
+  </header>
 
   <div *ngIf="items.length === 0 && !submitted" class="empty-state">
     <p>Your cart is empty.</p>
-    <a routerLink="/products" class="btn">Browse Products</a>
+    <a routerLink="/products" [queryParams]="continueShoppingParams" class="btn">Browse Products</a>
   </div>
 
   <div *ngIf="submitted" class="success-box">
     <h2>Thank you!</h2>
     <p>Your order has been submitted successfully. Our team will contact you shortly.</p>
     <a *ngIf="whatsappUrl" [href]="whatsappUrl" target="_blank" rel="noopener" class="btn whatsapp-btn">Send Order on WhatsApp</a>
-    <a routerLink="/products" class="btn">Continue Shopping</a>
+    <a routerLink="/products" [queryParams]="continueShoppingParams" class="btn">Continue Shopping</a>
   </div>
 
   <div *ngIf="items.length > 0 && !submitted" class="cart-layout">
     <div class="cart-items">
-      <div class="section-heading">Selected Items</div>
+      <div class="section-heading"><span>01</span><div><strong>Your selection</strong><small>{{ items.length }} {{ items.length === 1 ? 'product' : 'products' }}</small></div></div>
       <div *ngFor="let item of items" class="cart-item">
         <img *ngIf="item.product.imageUrl" [src]="resolveImageUrl(item.product.imageUrl)" [alt]="item.product.name" />
         <div class="details">
           <h3>{{ item.product.name }}</h3>
-          <p>₹{{ getPrice(item.product) }} each</p>
+          <p class="unit-price">₹{{ getPrice(item.product) }} <span>each</span></p>
           <div class="qty-row">
             <app-quantity-selector [quantity]="item.quantity" [compact]="true" (quantityChange)="updateQuantity(item.product._id, $event)"></app-quantity-selector>
           </div>
@@ -30,33 +36,33 @@
       </div>
 
       <div class="cart-actions">
-        <a routerLink="/products" class="btn btn-outline">Continue Shopping</a>
+        <a routerLink="/products" [queryParams]="continueShoppingParams" class="btn btn-outline">Continue Shopping</a>
       </div>
     </div>
 
     <div class="checkout-column">
-      <div class="section-heading checkout-heading">Place Your Order</div>
+      <div class="section-heading checkout-heading"><span>02</span><div><strong>Delivery details</strong><small>Tell us how to reach you</small></div></div>
       <div class="checkout-box">
-        <h2>Customer Details</h2>
+        <div class="form-intro"><span class="form-icon" aria-hidden="true">✦</span><div><h2>Who should we contact?</h2><p>Fields marked * are required.</p></div></div>
           <div class="field-group">
-          <label>Customer Name *</label>
-          <input [(ngModel)]="customerName" type="text" />
+          <label for="customer-name">Customer name <span>*</span></label>
+          <input id="customer-name" [(ngModel)]="customerName" type="text" autocomplete="name" placeholder="Enter your full name" />
         </div>
         <div class="field-group">
-          <label>Mobile Number *</label>
-          <input [(ngModel)]="mobileNumber" type="tel" />
+          <label for="mobile-number">Mobile number <span>*</span></label>
+          <input id="mobile-number" [(ngModel)]="mobileNumber" type="tel" autocomplete="tel" inputmode="tel" placeholder="Your contact number" />
         </div>
         <div class="field-group">
-          <label>WhatsApp Number</label>
-          <input [(ngModel)]="whatsappNumber" type="tel" />
+          <label for="whatsapp-number">WhatsApp number <small>Optional</small></label>
+          <input id="whatsapp-number" [(ngModel)]="whatsappNumber" type="tel" autocomplete="tel" inputmode="tel" placeholder="If different from mobile" />
         </div>
         <div class="field-group">
-          <label>Address</label>
-          <textarea [(ngModel)]="address" rows="3"></textarea>
+          <label for="delivery-address">Delivery address <small>Optional</small></label>
+          <textarea id="delivery-address" [(ngModel)]="address" rows="3" autocomplete="street-address" placeholder="Add your delivery address"></textarea>
         </div>
         <div class="field-group">
-          <label>Source</label>
-          <select [(ngModel)]="source">
+          <label for="order-source">How did you find us? <small>Optional</small></label>
+          <select id="order-source" [(ngModel)]="source">
             <option value="Google Search">Google Search</option>
             <option value="Instagram">Instagram</option>
             <option value="WhatsApp">WhatsApp</option>
@@ -65,6 +71,7 @@
         </div>
 
         <div class="totals">
+          <div class="totals-heading"><span>Order summary</span><span>{{ items.length }} {{ items.length === 1 ? 'item' : 'items' }}</span></div>
           <div><span>Order Price</span><strong>₹{{ getOrderPrice() | number:'1.2-2' }}</strong></div>
           <div><span>Packing Charges (1.5%)</span><strong>₹{{ getPackagingPrice() | number:'1.2-2' }}</strong></div>
           <div class="total-price"><span>Total Price</span><strong>₹{{ getTotal() | number:'1.2-2' }}</strong></div>
@@ -77,6 +84,7 @@
         <button type="button" class="btn submit-btn" [disabled]="submitting || !meetsMinimumOrderPrice" (click)="submitOrder()">
           {{ submitting ? 'Submitting…' : 'Submit Order' }}
         </button>
+        <p class="checkout-note"><span aria-hidden="true">◆</span> Our team will contact you to confirm your order details.</p>
       </div>
     </div>
   </div>

@@ -6,13 +6,14 @@ import { ApiService } from '../../services/api.service';
 import { Product } from '../../models/product.model';
 import { Category } from '../../models/category.model';
 import { resolveImageUrl } from '../../shared/resolve-image-url';
-import { CartService } from '../../services/cart.service';
+import { ProductSelectionService } from '../../services/product-selection.service';
 import { QuantitySelectorComponent } from '../../shared/quantity-selector/quantity-selector.component';
+import { ProductSelectionComponent } from '../../shared/product-selection/product-selection.component';
 
 @Component({
   selector: 'app-products',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, QuantitySelectorComponent],
+  imports: [CommonModule, FormsModule, RouterLink, QuantitySelectorComponent, ProductSelectionComponent],
   templateUrl: './products.component.html',
   styleUrl: './products.component.css',
 })
@@ -20,7 +21,7 @@ export class ProductsComponent implements OnInit {
   private api = inject(ApiService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
-  private cart = inject(CartService);
+  private selection = inject(ProductSelectionService);
 
   products: Product[] = [];
   categories: Category[] = [];
@@ -28,7 +29,31 @@ export class ProductsComponent implements OnInit {
   searchTerm = '';
   offerOnly = false;
   loading = true;
-  quantities: Record<string, number> = {};
+  get hasSelection(): boolean { return this.selection.getProductCount() > 0; }
+
+  get categoryGroups(): { category: Category | null; products: Product[] }[] {
+    const groups = new Map<string, { category: Category | null; products: Product[] }>();
+    for (const category of this.categories) groups.set(category._id, { category, products: [] });
+
+    for (const product of this.products) {
+      const category = typeof product.categoryId === 'object'
+        ? product.categoryId
+        : this.categories.find((candidate) => candidate._id === product.categoryId) ?? null;
+      const key = category?._id ?? 'uncategorized';
+      if (!groups.has(key)) groups.set(key, { category, products: [] });
+      groups.get(key)!.products.push(product);
+    }
+
+    return [...groups.values()].filter((group) => group.products.length > 0);
+  }
+
+  trackCategoryGroup(_index: number, group: { category: Category | null }): string {
+    return group.category?._id ?? 'uncategorized';
+  }
+
+  trackProduct(_index: number, product: Product): string {
+    return product._id;
+  }
 
   ngOnInit() {
     this.api.getCategories().subscribe({ next: (c) => (this.categories = c) });
@@ -89,22 +114,14 @@ export class ProductsComponent implements OnInit {
   }
 
   getQuantity(product: Product): number {
-    return this.quantities[product._id] ?? 0;
+    return this.selection.getQuantity(product._id);
   }
 
   setQuantity(product: Product, quantity: number) {
-    this.quantities[product._id] = Math.max(0, quantity);
-  }
-
-  addToCart(product: Product) {
-    const quantity = this.getQuantity(product);
-    if (quantity < 1) return;
-    this.cart.add(product, quantity);
-    this.router.navigate(['/cart']);
+    this.selection.setQuantity(product, quantity);
   }
 
   getSelectedTotal(product: Product): number {
-    const price = product.priceMode === 'offer' ? (product.offerPrice ?? product.price ?? 0) : (product.price ?? 0);
-    return price * this.getQuantity(product);
+    return this.selection.getProductTotal(product);
   }
 }

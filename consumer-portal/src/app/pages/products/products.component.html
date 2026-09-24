@@ -1,4 +1,4 @@
-<section class="container" style="padding: 24px 0;">
+<section class="container products-page selection-page" [class.has-selection]="hasSelection">
   <h1>Products</h1>
 
   <div class="filters">
@@ -26,11 +26,44 @@
     >{{ c.name }}</button>
   </div>
 
+  <div class="selection-guide">
+    <span class="guide-icon" aria-hidden="true">✦</span>
+    <p><strong>Choose quantities as you browse.</strong> Your selection stays with you when you switch categories. Add everything to your cart together when you’re ready.</p>
+  </div>
+
   <p *ngIf="loading">Loading products…</p>
   <p *ngIf="!loading && products.length === 0">No products found.</p>
 
-  <div class="product-grid" *ngIf="!loading">
-    <div *ngFor="let p of products" class="card product-card">
+  <ng-container *ngIf="!loading && !activeCategory; else singleCategoryProducts">
+    <section *ngFor="let group of categoryGroups; let groupIndex = index; trackBy: trackCategoryGroup" class="category-section">
+      <header class="category-heading" [attr.data-tone]="groupIndex % 5">
+        <span class="category-emblem" aria-hidden="true">
+          <svg viewBox="0 0 48 48" focusable="false">
+            <path d="M24 5v7m0 24v7M5 24h7m24 0h7M10.6 10.6l5 5m16.8 16.8 5 5m0-26.8-5 5m-16.8 16.8-5 5" />
+            <path d="m24 17 2.1 4.9L31 24l-4.9 2.1L24 31l-2.1-4.9L17 24l4.9-2.1L24 17Z" />
+            <path d="m31 9 .8 2.2L34 12l-2.2.8L31 15l-.8-2.2L28 12l2.2-.8L31 9Z" />
+          </svg>
+        </span>
+        <div class="category-heading-copy">
+          <span class="category-kicker">Cracker collection</span>
+          <h2>{{ group.category?.name || 'More crackers' }}</h2>
+        </div>
+        <span class="category-count"><strong>{{ group.products.length }}</strong><span>{{ group.products.length === 1 ? 'item' : 'items' }}</span></span>
+      </header>
+      <div class="product-grid">
+        <ng-container *ngFor="let p of group.products; trackBy: trackProduct"><ng-container *ngTemplateOutlet="productCard; context: { $implicit: p }"></ng-container></ng-container>
+      </div>
+    </section>
+  </ng-container>
+
+  <ng-template #singleCategoryProducts>
+    <div class="product-grid" *ngIf="!loading">
+      <ng-container *ngFor="let p of products; trackBy: trackProduct"><ng-container *ngTemplateOutlet="productCard; context: { $implicit: p }"></ng-container></ng-container>
+    </div>
+  </ng-template>
+
+  <ng-template #productCard let-p>
+    <div class="card product-card" [class.is-selected]="getQuantity(p) > 0">
       <a [routerLink]="['/products', p.slug]" class="product-media-link" [attr.aria-label]="(p.youtubeVideoUrl ? 'Watch video and view details for ' : 'View details for ') + p.name">
         <img *ngIf="p.imageUrl" [src]="resolveImageUrl(p.imageUrl)" [alt]="p.name" />
         <span *ngIf="p.youtubeVideoUrl" class="video-badge" aria-hidden="true">▶ Video</span>
@@ -45,13 +78,18 @@
           <span *ngIf="getSavings(p) != null" class="saving">Save ₹{{ getSavings(p) }}</span>
         </div>
         <div class="product-card-actions">
-          <div class="selection-summary">
+          <div class="quantity-choice">
+            <span class="quantity-label">Choose quantity</span>
             <app-quantity-selector [quantity]="getQuantity(p)" [min]="0" (quantityChange)="setQuantity(p, $event)"></app-quantity-selector>
-            <div class="selected-total"><span>Selected total</span><strong>₹{{ getSelectedTotal(p) | number:'1.2-2' }}</strong></div>
           </div>
-          <button type="button" class="btn add-to-cart" [disabled]="getQuantity(p) === 0" (click)="addToCart(p)">{{ getQuantity(p) ? 'Add ' + getQuantity(p) + ' to Cart' : 'Select Quantity' }}</button>
+          <div *ngIf="getQuantity(p) > 0" class="selection-status" aria-live="polite">
+            <span><span class="selected-check" aria-hidden="true">✓</span> Added to your selection</span>
+            <strong *ngIf="p.showPrice">₹{{ getSelectedTotal(p) | number:'1.2-2' }}</strong>
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  </ng-template>
+
+  <app-product-selection [returnCategory]="activeCategory" [returnQuery]="searchTerm" [returnOffer]="offerOnly"></app-product-selection>
 </section>

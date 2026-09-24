@@ -1,3 +1,4 @@
+<main class="home-page selection-page" [class.has-selection]="hasSelection">
 <section class="hero">
   <div class="hero-stars" aria-hidden="true"><span>✦</span><span>·</span><span>✧</span><span>·</span><span>✦</span></div>
   <div class="container">
@@ -34,27 +35,36 @@
 <section class="container offer-section" *ngIf="offerProducts.length">
   <div class="section-title-row"><div><p class="eyebrow">CELEBRATION PICKS</p><h2>Festival offers</h2></div><a routerLink="/products" class="text-link">See all crackers →</a></div>
   <div class="offer-grid">
-    <div *ngFor="let product of offerProducts" class="card offer-card">
-      <span class="offer-ribbon">OFFER</span>
+    <div *ngFor="let product of offerProducts" class="card product-card offer-card" [class.is-selected]="getQuantity(product) > 0">
       <a [routerLink]="['/products', product.slug]" class="offer-product-link" [attr.aria-label]="(product.youtubeVideoUrl ? 'Watch video and view details for ' : 'View details for ') + product.name">
       <div class="product-media-link">
       <img *ngIf="product.imageUrl" [src]="resolveImageUrl(product.imageUrl)" [alt]="product.name" />
       <span *ngIf="product.youtubeVideoUrl" class="video-badge" aria-hidden="true">▶ Video</span>
       <span class="media-overlay"><span>{{ product.youtubeVideoUrl ? 'Watch video & details' : 'View details' }}</span><span aria-hidden="true">→</span></span>
       </div>
-      <div class="offer-body"><h3>{{ product.name }}</h3><p class="offer-price">₹{{ product.offerPrice ?? product.price }}</p><del *ngIf="product.originalPrice != null">₹{{ product.originalPrice }}</del><span *ngIf="getSavings(product) != null" class="saving">Save ₹{{ getSavings(product) }}</span></div>
-      </a>
-      <div class="card-cart-actions">
-        <div class="selection-summary">
-          <app-quantity-selector [quantity]="getQuantity(product)" [min]="0" (quantityChange)="setQuantity(product, $event)"></app-quantity-selector>
-          <div class="selected-total"><span>Selected total</span><strong>₹{{ getSelectedTotal(product) | number:'1.2-2' }}</strong></div>
+      <div class="offer-body">
+        <h3>{{ product.name }}</h3>
+        <span class="offer-badge">Festival offer</span>
+        <div *ngIf="product.showPrice" class="offer-price-row">
+          <span class="offer-price">₹{{ product.offerPrice ?? product.price }}</span>
+          <del *ngIf="product.originalPrice != null">₹{{ product.originalPrice }}</del>
+          <span *ngIf="getSavings(product) != null" class="offer-saving">Save ₹{{ getSavings(product) }}</span>
         </div>
-        <button type="button" class="btn add-to-cart" [disabled]="getQuantity(product) === 0" (click)="addToCart(product)">{{ getQuantity(product) ? 'Add ' + getQuantity(product) + ' to Cart' : 'Select Quantity' }}</button>
+      </div>
+      </a>
+      <div class="product-card-actions">
+        <div class="quantity-choice">
+          <span class="quantity-label">Choose quantity</span>
+          <app-quantity-selector [quantity]="getQuantity(product)" [min]="0" (quantityChange)="setQuantity(product, $event)"></app-quantity-selector>
+        </div>
+        <div *ngIf="getQuantity(product) > 0" class="selection-status" aria-live="polite">
+          <span><span class="selected-check" aria-hidden="true">✓</span> Added to your selection</span>
+          <strong *ngIf="product.showPrice">₹{{ getSelectedTotal(product) | number:'1.2-2' }}</strong>
+        </div>
       </div>
     </div>
   </div>
 </section>
-
 <section class="container info-strip">
   <div class="card">
     <h3>Visit or call us</h3>
@@ -63,3 +73,5 @@
     <p *ngIf="settings?.openingHours">{{ settings?.openingHours }}</p>
   </div>
 </section>
+<app-product-selection [returnOffer]="true"></app-product-selection>
+</main>

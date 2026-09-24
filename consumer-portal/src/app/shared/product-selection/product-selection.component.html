@@ -1,0 +1,81 @@
+<aside *ngIf="selectedProductCount > 0" class="selection-tray" aria-label="Your product selection">
+  <div class="selection-tray-inner">
+    <div class="tray-summary" aria-live="polite">
+      <span class="tray-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><path d="M3 4h2l2.1 10.2a2 2 0 0 0 2 1.6h7.8a2 2 0 0 0 2-1.6L21 8H6"/><circle cx="10" cy="20" r="1"/><circle cx="18" cy="20" r="1"/></svg>
+        <span>{{ selectedProductCount }}</span>
+      </span>
+      <div class="tray-copy">
+        <strong>{{ selectedProductCount }} {{ selectedProductCount === 1 ? 'product' : 'products' }} selected</strong>
+        <span>Total quantity: {{ selectedQuantityCount }}</span>
+      </div>
+    </div>
+    <div class="tray-subtotal">
+      <ng-container *ngIf="selectionPricesAvailable; else priceOnRequest">
+        <span>Selection subtotal</span><strong>₹{{ selectionSubtotal | number:'1.2-2' }}</strong>
+      </ng-container>
+      <ng-template #priceOnRequest><span>Price</span><strong>Shown in cart</strong></ng-template>
+    </div>
+    <div class="tray-actions">
+      <button #reviewButton type="button" class="review-selection" (click)="openReviewSelection()" aria-haspopup="dialog" [attr.aria-expanded]="reviewOpen" aria-controls="selection-review-panel">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3.75h7l4 4v12.5H7z"/><path d="M14 3.75v4h4M10 12h5M10 15.5h5"/></svg>
+        <span>Review selection</span>
+        <span class="review-count">{{ selectedProductCount }}</span>
+      </button>
+      <button type="button" class="btn add-selection" (click)="addSelectedToCart()" [disabled]="addingToCart" [attr.aria-label]="'Place your order with ' + selectedProductCount + ' selected products'">
+        {{ addingToCart ? 'Opening order form…' : 'Place your order' }} <span aria-hidden="true">→</span>
+      </button>
+    </div>
+  </div>
+</aside>
+
+<div *ngIf="reviewOpen" class="review-backdrop" (click)="closeReviewSelection()">
+  <section #reviewPanel id="selection-review-panel" class="review-panel" role="dialog" aria-modal="true" aria-labelledby="selection-review-title" (click)="$event.stopPropagation()">
+    <header class="review-header">
+      <div>
+        <span class="review-kicker">Your order so far</span>
+        <h2 id="selection-review-title">Review selection <span>({{ selectedProductCount }})</span></h2>
+      </div>
+      <button #reviewCloseButton type="button" class="review-close" aria-label="Close selection review" (click)="closeReviewSelection()">×</button>
+    </header>
+
+    <p class="review-intro">Check quantities across your selected products. You can change or remove anything before reviewing your order.</p>
+
+    <div *ngIf="selectedProductCount > 0" class="review-list">
+      <article *ngFor="let product of selectedProductList; trackBy: trackProduct" class="review-item">
+        <img *ngIf="product.imageUrl" [src]="resolveImageUrl(product.imageUrl)" [alt]="product.name" />
+        <div *ngIf="!product.imageUrl" class="review-image-placeholder" aria-hidden="true">✦</div>
+        <div class="review-item-content">
+          <span class="review-category">{{ getCategoryName(product) }}</span>
+          <h3>{{ product.name }}</h3>
+          <div class="review-item-controls">
+            <app-quantity-selector [quantity]="getQuantity(product)" [min]="0" [compact]="true" (quantityChange)="setQuantity(product, $event)"></app-quantity-selector>
+            <button type="button" class="review-remove" (click)="removeSelectedProduct(product)" [attr.aria-label]="'Remove ' + product.name + ' from selection'">Remove</button>
+          </div>
+        </div>
+        <div class="review-item-price">
+          <strong *ngIf="canShowProductTotal(product)">₹{{ getSelectedTotal(product) | number:'1.2-2' }}</strong>
+          <span *ngIf="!canShowProductTotal(product)">Price shown in cart</span>
+        </div>
+      </article>
+    </div>
+
+    <div *ngIf="selectedProductCount === 0" class="review-empty">
+      <span aria-hidden="true">✦</span>
+      <strong>Your selection is empty</strong>
+      <p>Close this panel and choose quantities to add products.</p>
+    </div>
+
+    <footer class="review-footer">
+      <button type="button" class="review-clear" (click)="clearSelection()" [disabled]="selectedProductCount === 0">Clear all</button>
+      <div class="review-footer-total">
+        <span>{{ selectedQuantityCount }} total quantity</span>
+        <strong *ngIf="selectionPricesAvailable">₹{{ selectionSubtotal | number:'1.2-2' }}</strong>
+        <strong *ngIf="!selectionPricesAvailable">Shown in cart</strong>
+      </div>
+      <button type="button" class="btn review-add" (click)="addSelectedToCart()" [disabled]="selectedProductCount === 0 || addingToCart">
+        {{ addingToCart ? 'Opening order form…' : 'Place your order' }}
+      </button>
+    </footer>
+  </section>
+</div>

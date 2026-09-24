@@ -28,15 +28,24 @@ export class CartService {
   }
 
   add(product: Product, quantity = 1) {
-    const items = this.read();
     const amount = Math.max(1, Math.floor(quantity) || 1);
-    const existing = items.find((item) => item.product._id === product._id);
-    if (existing) {
-      existing.quantity += amount;
-    } else {
-      items.push({ product, quantity: amount });
+    this.addMany([{ product, quantity: amount }]);
+  }
+
+  addMany(entries: { product: Product; quantity: number }[]) {
+    const items = this.read();
+    for (const { product, quantity } of entries) {
+      const amount = Math.max(0, Math.floor(quantity));
+      if (!amount) continue;
+
+      const existing = items.find((item) => item.product._id === product._id);
+      if (existing) {
+        existing.quantity += amount;
+      } else {
+        items.push({ product, quantity: amount });
+      }
     }
-    this.write(items);
+    if (entries.length) this.write(items);
   }
 
   remove(productId: string) {
